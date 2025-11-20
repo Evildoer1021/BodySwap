@@ -3,7 +3,7 @@ from PIL import Image
 from io import BytesIO
 
 # Configure the client with your API key
-client = genai.Client(api_key="AIzaSyCV53ILvQamNWdbWS_BP7qCwqjsgGB4et0")
+client = genai.Client(api_key="YourAPIKey")
 
 person = input("Who would you like impersonate? \na for Ariel, r for Rapunzel, j for Jasmine, e for Elsa: \n")
 
@@ -35,7 +35,7 @@ if face == "e":
 
 
 prompt = """Change the background to a solid black. Then, turn the person into a bald, white mannequin, and convert every visible part of their body into mannequin material, even if the limb is only partially visible or cropped. 
-Any visible part of a leg, arm, hand, or foot must become smooth mannequin plastic with a consistent color. While there is not always a leg, mark a leg if present with a label with the word leg on it. Don't try to hallucinate a leg if it is not there.
+Any visible part of a leg, arm, hand, or foot must become smooth mannequin plastic with a consistent color. While there is not always a leg, mark a leg if present with a label with the word leg on it. The label always has to be on the leg itself and not simply near it. Don't try to hallucinate a leg if it is not there.
 Remove any facial features inclduing eye sockets and nose. Assume that any same-colored objected connected to the hair is also hair and remove it all. Make every visible skin region match the mannequin head’s plastic material and color. Make sure that the hands lack detail such as removing shadowing, removing the fingernails, and removing the joint marks. Keep eye socket shadowing however. Absolutely keep the clothes and accessories."""
 
 # Pass both the text prompt and the image in the 'contents' list
