@@ -1,0 +1,111 @@
+from google import genai
+from PIL import Image
+from io import BytesIO
+
+# Configure the client with your API key
+client = genai.Client(api_key="AIzaSyCV53ILvQamNWdbWS_BP7qCwqjsgGB4et0")
+
+person = input("Who would you like impersonate? \na for Ariel, r for Rapunzel, j for Jasmine, e for Elsa: \n")
+
+
+
+if person == "a":
+    image = Image.open("/Users/sehyunk/Desktop/AI_Internship/Images/Ariel.png") 
+    image2 = Image.open("/Users/sehyunk/Desktop/AI_Internship/Images/Ariel.png") 
+if person == "r":
+    image = Image.open("/Users/sehyunk/Desktop/AI_Internship/Images/Rapunzel.png")
+    image2 = Image.open("/Users/sehyunk/Desktop/AI_Internship/Images/Rapunzel.png")
+if person == "j":
+    image = Image.open("/Users/sehyunk/Desktop/AI_Internship/Images/Jasmine.png")
+    image2 = Image.open("/Users/sehyunk/Desktop/AI_Internship/Images/Jasmine.png")
+if person == "e":
+    image = Image.open("/Users/sehyunk/Desktop/AI_Internship/Images/Elsa.png")
+    image2 = Image.open("/Users/sehyunk/Desktop/AI_Internship/Images/Elsa.png")  
+    
+face = input("Which face would you like to use? \ntype 1, 2, or 3 or e for the example picture: \n")
+if face == "1":
+    image1 = Image.open("/Users/sehyunk/Desktop/AI_Internship/Images/face.png")
+if face == "2":
+    image1 = Image.open("/Users/sehyunk/Desktop/AI_Internship/Images/face2.png")
+if face == "3":
+    image1 = Image.open("/Users/sehyunk/Desktop/AI_Internship/Images/face3.png")
+if face == "e":
+    image1 = Image.open("/Users/sehyunk/Desktop/AI_Internship/Images/Example.png")
+
+
+
+prompt = """Change the background to a solid black. Then, turn the person into a bald, white mannequin, and convert every visible part of their body into mannequin material, even if the limb is only partially visible or cropped. 
+Any visible part of a leg, arm, hand, or foot must become smooth mannequin plastic with a consistent color. While there is not always a leg, mark a leg if present with a label with the word leg on it. Don't try to hallucinate a leg if it is not there.
+Remove any facial features inclduing eye sockets and nose. Assume that any same-colored objected connected to the hair is also hair and remove it all. Make every visible skin region match the mannequin head’s plastic material and color. Make sure that the hands lack detail such as removing shadowing, removing the fingernails, and removing the joint marks. Keep eye socket shadowing however. Absolutely keep the clothes and accessories."""
+
+# Pass both the text prompt and the image in the 'contents' list
+response = client.models.generate_content(
+    model="gemini-2.5-flash-image",
+    contents=[prompt, image],
+)
+
+for part in response.candidates[0].content.parts:
+    if part.text is not None:
+        print(part.text)
+    elif part.inline_data is not None:
+        image = Image.open(BytesIO(part.inline_data.data))
+        image.save("mannequin.png")
+        image = Image.open("/Users/sehyunk/AI_Internship/mannequin.png")
+        print ("STEP 1 COMPLETE")
+
+
+prompt = """Create an estimated full body of the face with all four limbs showing. Have minimal clothing to show as much skin as possible. Don't change the hair. Keep the background something simple. Zoom in so the picture goes from head to knees in height and shoulder to shoulder in width. Essentially, go as close as you can to the face while still including the body until the knees"""
+
+# Pass both the text prompt and the image in the 'contents' list
+response = client.models.generate_content(
+    model="gemini-2.5-flash-image",
+    contents=[prompt, image1],
+)
+
+for part in response.candidates[0].content.parts:
+    if part.text is not None:
+        print(part.text)
+    elif part.inline_data is not None:
+        image1 = Image.open(BytesIO(part.inline_data.data))
+        image1.save("body.png")
+        image1 = Image.open("/Users/sehyunk/AI_Internship/body.png")
+        print ("STEP 2 COMPLETE")
+
+prompt = """Replace the body of the mannequin with the model’s body. If you read the word leg or LEG on certain white sections, change those white sections into the model’s legs including their skin tone. Keep the mannequin's pose. Keep the model's hairstyle. Make sure the limbs and hands are realistically transformed as well. Keep the mannequin's clothes and background. It should look like the mannequin and model swapped places. Once the swap is completed, remove the text leg."""
+
+# Pass both the text prompt and the image in the 'contents' list
+response = client.models.generate_content(
+    model="gemini-2.5-flash-image",
+    contents=[prompt, image, image1],
+)
+
+for part in response.candidates[0].content.parts:
+    if part.text is not None:
+        print(part.text)
+    elif part.inline_data is not None:
+        image = Image.open(BytesIO(part.inline_data.data))
+        image.save("finished.png")
+        print ("STEP 3 COMPLETE")
+
+prompt = """Change the black background to the other one. Beware for any extremely long hair that may look like part of the background, and make sure to filter it out. We don't want some other person's hair intruding in the black ground"""
+
+# Pass both the text prompt and the image in the 'contents' list
+response = client.models.generate_content(
+    model="gemini-2.5-flash-image",
+    contents=[prompt, image, image2],
+)
+
+for part in response.candidates[0].content.parts:
+    if part.text is not None:
+        print(part.text)
+    elif part.inline_data is not None:
+        image = Image.open(BytesIO(part.inline_data.data))
+        image.save("ActuallyFinished.png")
+
+
+        
+        
+
+print ("FINISHED WITH GENERATION")
+
+
