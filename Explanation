@@ -2,20 +2,25 @@
   -I save both images to variables "image" and "image1" each to use in prompts later.
   -The variable "image" (the background) has another variable called "image2" that has the same image saved. This is because the variable "image" will be overwritten.
 
-2. First step is changing the background to black. There was this issue where stuff like long hair was unable to be detected as the AI would think it is part of the background.
+2.The first couple of steps are just precuations. I first make the target bald to help the bolded outline in accuracy and to not influence the swap to keep any aspects of the hair.
+Even if this part is not perfect, as long as the hair on the scalp is gone, that is enough becuase it will be removed when the background is turned black.
+I extract just the clothes in one image and ask for a written description of the target posture. These helps remove any 
+sources of error in the final image because relying on the AI to decipher those cues for itself is inconsistent due to its lack of perfect 
+visual recognition. The clothes are used for the full body shot and description is used for the swap.
+
+2. Next, changing the background to black. There was this issue where stuff like long hair was unable to be detected as the AI would think it is part of the background.
 So I just decided to remove the whole background and add it later (through the image2 variable we kept saved).
   -There are a lot of conditions whilst creating the mannequin, but the most important is that i had the AI label leg sections as "leg" or "LEG" 
   -I can tell the AI in another prompt that any white section with that label is meant to be turned into a leg (Though, its not the most perfect process yet)
 
-3. Next step, I just have the AI create a full body shot of the face. The theory is that seeing the arms and legs of the face will help the swap be more consistent.
-I thought it would be necessary because previous body swap methods sometimes had leftover mannequin body parts simply due to the AI's visual recognition limits, so the 
-fact the AI does not need to generate new body parts should help it in the swapping process. This is another benefit of changing the background to black as well 
+3. Next step, I just have the AI create a full body shot of the face in the target clothes. The theory is that seeing the arms and legs of the face will help the swap be more consistent.
+I thought it would be necessary because previous body swap methods sometimes had leftover mannequin body parts or drawings of the faces simply due to the AI's visual recognition limits, so the 
+fact the AI does not need to imagine new body parts should help it in the swapping process. This is another benefit of changing the background to black as well 
 because the white mannequin contrasts well with the background and helps the AI's visual recognition.
 
-4. This is the actual swapping part. I previously used to tell the AI to "reconstruct" or visualize the face, but recently I've just been telling it to body swap literally.
-It seems to work fine so far, but it still doesn't work when the swap is between person to person. This part is sometimes iffy, where the only issues are either only the face swapped
-or the whole mannequin remained. I fixed the code, but I didn't test it extensively to see if it is fine yet. Here, is where the text "leg" is removed,
-which should help the leg swapping (in theory)
+4. This is the actual swapping part. I tell the AI to "estimate" or visualize the face in the posture, because the swap still doesn't work when the swap is between person to person. 
+This part migth still be iffy, but in current testing there isn't any issues. The addition of a written addition and reversion back to a bolded outline rather than mannequin seems to be serving well.
+That is also why the body shot needs the clothes beofre the swap occurs. Although, the testing wasn't extensive. 
 
 5. Finally, I bring back the saved target background image in "image2" and ask the AI to change the black background to the other one. Even though this wording is vague, 
 simply telling it black background makes it easy for the AI to recognize what image needs to do.
