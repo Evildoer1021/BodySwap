@@ -32,7 +32,27 @@ if face == "3":
 if face == "e":
     image1 = Image.open("/Users/sehyunk/Desktop/AI_Internship/Images/Example.png")
 
-prompt = """Remove everything from both the background and the person, but you must absolutely keep only the clothes in the image"""
+
+
+description = ""
+prompt = """Create a eleven sentence description about the person's pose, expression, eye direction and objects she is holding to prioritize the replicability of the image by another person. However, do not describe or even mention any unique physical features like face shape, hair colors, or head/hair accessories etc, but describe clothes and objects being held in detail. Additionally, describe what or where she is looking, especially the person would be making eye contact with whoever looks at the image."""
+
+# Pass both the text prompt and the image in the 'contents' list
+response = client.models.generate_content(
+    model="gemini-2.5-flash-image",
+    contents=[prompt, image],
+)
+
+for part in response.candidates[0].content.parts:
+    if part.text is not None:
+        print(part.text)
+        description = part.text
+
+    elif part.inline_data is not None:
+        
+        print ("Its an image bruh")
+
+prompt = """Remove all of the hair but change the hair to a distinguishable shaved head. Don’t forget to remove long hair or ponytails. Keep everythign else the same"""
 
 # Pass both the text prompt and the image in the 'contents' list
 response = client.models.generate_content(
@@ -44,12 +64,31 @@ for part in response.candidates[0].content.parts:
     if part.text is not None:
         print(part.text)
     elif part.inline_data is not None:
-        image2 = Image.open(BytesIO(part.inline_data.data))
-        image2.save("headless.png")
-        image2 = Image.open("/Users/sehyunk/AI_Internship/headless.png")
+        image = Image.open(BytesIO(part.inline_data.data))
+        image.save("bald.png")
+        image = Image.open("/Users/sehyunk/AI_Internship/bald.png")
         print ("STEP 0.5 COMPLETE")
-prompt = """Change the entire background to a solid black background including any hair and furniture, only keeping the person. Then, turn the person's head only into a white mannequin, while keeping the person's pose.
-The mannequin should no have any clothing. Assume that any same-colored objects connected to the hair is also hair and remove it all. Make sure that the hands lack detail, so remove shadowing, remove the fingernails, and remove the joint marks. Keep eye socket shadowing however. """
+
+prompt = """Remove everything from both the background and the person, but you must absolutely keep only the clothes in the image. Spread the clothes out in the image, dont keep them in a line"""
+
+# Pass both the text prompt and the image in the 'contents' list
+response = client.models.generate_content(
+    model="gemini-2.5-flash-image",
+    contents=[prompt, image],
+)
+
+for part in response.candidates[0].content.parts:
+    if part.text is not None:
+        print(part.text)
+    elif part.inline_data is not None:
+        image3 = Image.open(BytesIO(part.inline_data.data))
+        image3.save("clothes.png")
+        image3 = Image.open("/Users/sehyunk/AI_Internship/clothes.png")
+        print ("STEP 0.75 COMPLETE")
+
+
+
+prompt = """Change the background to a solid white. Remove the person and their body but keep unartistic shapes like ovals that outline of the person's body and limbs, but not the hair or background. For the head portion, make sure the head is just fully circular. For the hands, make sure to remove them, but keep a loose shape of the fingers. Make loose, monotone outlines of where to keep the clothes and accessories, but person and their limbs should be gone with only white and black."""
 
 # Pass both the text prompt and the image in the 'contents' list
 response = client.models.generate_content(
@@ -65,12 +104,14 @@ for part in response.candidates[0].content.parts:
         image.save("mannequin.png")
         image = Image.open("/Users/sehyunk/AI_Internship/mannequin.png")
         print ("STEP 1 COMPLETE")
-prompt = """Create an estimated body of the person wearing the given clothes and copying the mannequin's exact pose. Don't change the hair. Keep the background something simple. GO as close as you can to the face while still including the body until the knees"""
+
+
+prompt = """Create an estimated full body of the face with all four limbs showing. Have simple clothing to show more skin in the arms and legs nonsexually. Don't change the hair. Keep the background something simple. Go as close as you can to the face while still including the body until the knees"""
 
 # Pass both the text prompt and the image in the 'contents' list
 response = client.models.generate_content(
     model="gemini-2.5-flash-image",
-    contents=[prompt, image, image2],
+    contents=[prompt, image1],
 )
 
 for part in response.candidates[0].content.parts:
@@ -82,12 +123,12 @@ for part in response.candidates[0].content.parts:
         image1 = Image.open("/Users/sehyunk/AI_Internship/body.png")
         print ("STEP 2 COMPLETE")
 
-prompt = """Have this person be in the empty background while matching her face to the white outline and estimated body to the bolded outline and wearing the clothes given. The person shouldn't look like a drawing but realistic. Keep the model's hairstyle. Keep the outline's clothes and background. There should be absolutely none of the bolded outline remaining"""
+prompt = f"""Have this person be in the empty background while her body replaces the white outline and wearing the clothes given. She should be {description}. Keep the mannequin's pose and clothes, but get rid of everything else including its physical body. Keep the model's hairstyle, body and skin color.  It should look like the mannequin and model swapped places. Keep the background a monotone gray"""
 
 # Pass both the text prompt and the image in the 'contents' list
 response = client.models.generate_content(
     model="gemini-2.5-flash-image",
-    contents=[prompt, image, image1],
+    contents=[prompt, image, image1, image3],
 )
 
 for part in response.candidates[0].content.parts:
@@ -98,7 +139,7 @@ for part in response.candidates[0].content.parts:
         image.save("finished.png")
         print ("STEP 3 COMPLETE")
 
-prompt = """Change the black background to the other one. Beware for any extremely long hair that may look like part of the background, and make sure to filter it out. We don't want some other person's hair intruding in the black ground. additionally remove any bolded black outline, which will look like a thin black line on the body."""
+prompt = """Change the white background to the other one. Beware for any extremely long hair that may look like part of the background, and make sure to filter it out. We don't want some other person's hair intruding in the black ground. additionally remove any bolded black outline, which will look like a thin black line on the body."""
 
 # Pass both the text prompt and the image in the 'contents' list
 response = client.models.generate_content(
@@ -113,8 +154,8 @@ for part in response.candidates[0].content.parts:
         image = Image.open(BytesIO(part.inline_data.data))
         image.save("ActuallyFinished.png")
         print ("DONE")
+        
+        
 
-
-
-
+print ("FINISHED WITH GENERATION")
 
