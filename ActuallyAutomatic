@@ -3,7 +3,7 @@ from PIL import Image
 from io import BytesIO
 
 # Configure the client with your API key
-client = genai.Client(api_key="")
+client = genai.Client(api_key="PUTAPIKEYHERE")
 
 person = input("Who would you like impersonate? \na for Ariel, r for Rapunzel, j for Jasmine, e for Elsa: \n")
 
